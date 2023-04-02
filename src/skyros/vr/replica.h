@@ -63,6 +63,9 @@ public:
                         void *meta_data) override;
 
 private:
+    int opLength = 1;
+    int keyLength = 24;
+
     view_t view;
     opnum_t lastCommitted;
     opnum_t lastOp;

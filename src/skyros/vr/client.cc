@@ -173,6 +173,12 @@ void
 VRClient::HandleReply(const TransportAddress &remote,
                       const proto::ReplyMessage &msg)
 {
+    if (msg.has_last_accepted()) {
+      Warning("reply contains -------- last accepted %d", msg.last_accepted());
+    } else {
+      Warning("panic panic panic -----");
+    }
+
     responses[msg.clientreqid()]++;
 
     // proxy to check whether the responses are from the same view.

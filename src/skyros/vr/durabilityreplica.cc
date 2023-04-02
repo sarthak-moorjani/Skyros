@@ -157,8 +157,9 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 
 	bool syncOrder = false;
 	string readRes = "";
+  int last_accepted = -1;
 
-	app->AppUpcall(msg, syncOrder, readRes);
+	app->AppUpcall(msg, syncOrder, readRes, last_accepted);
 
 	if (syncOrder) {
 	// Order the operation now; add to consensus log by sending an internal message to consensus.
@@ -192,6 +193,8 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		reply.set_opnum(0); //cannot order now!
 		reply.set_clientreqid(msg.req().clientreqid());
 		reply.set_replicaidx(this->replicaIdx);
+		if (last_accepted != -1)
+		  reply.set_last_accepted(last_accepted);
 		transport->SendMessage(this, remote, reply);
 	}
 

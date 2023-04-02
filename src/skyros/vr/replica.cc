@@ -468,6 +468,8 @@ VRReplica::CloseBatch()
         ASSERT(entry->viewstamp.view == view);
         ASSERT(entry->viewstamp.opnum == i);
         *r = entry->request;
+        string kvKey = r->op().substr(opLength, keyLength);
+        app->UpdateLastAcceptedMap(kvKey);
     }
     lastPrepare = p;
 
@@ -825,6 +827,10 @@ VRReplica::HandlePrepare(const TransportAddress &remote,
         this->lastOp++;
         log.Append(viewstamp_t(msg.view(), op),
                    req, LOG_STATE_PREPARED);
+
+        // Update the last accepted value.
+        string kvKey = req.op().substr(opLength, keyLength);
+        app->UpdateLastAcceptedMap(kvKey);
         UpdateClientTable(req);
     }
     ASSERT(op == msg.opnum());

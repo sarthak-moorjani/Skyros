@@ -79,6 +79,12 @@ private:
     // It facilitates a quick way of seeing what is the latest update to a key that is being read.
     std::unordered_map<string, CXID> lastUpdateToKey;
 
+    // Mapping from each key to last accepted value.
+    ConcurrentHashMap<string, int> last_accepted_map;
+
+    // Mapping from each key to last executed value.
+    ConcurrentHashMap<string, int> last_executed_map;
+
     // This is the durability log
     // It maps clientid, clientrequestid to a tuple of position, request
     // the ordering among the entries is established using the position
@@ -150,9 +156,22 @@ public:
 	 * immediately ordered by sending to consensus.
 	*/
 
-	virtual void AppUpcall(specpaxos::vr::proto::RequestMessage msg, bool &syncOrder, string &readRes) {
+  void UpdateLastAcceptedMap(string kvKey) {
+
+    Notice("Updating the last acc map ----- ----");
+    if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
+      int val = last_accepted_map.find(kvKey)->second;
+      last_accepted_map.insert_or_assign(kvKey, val + 1);
+      return;
+    }
+
+    last_accepted_map.insert_or_assign(kvKey, 1);
+  }
+
+	virtual void AppUpcall(specpaxos::vr::proto::RequestMessage msg, bool &syncOrder, string &readRes, int &last_accepted) {
 		syncOrder = false;
 
+    last_accepted = -1;
 		string op = msg.req().op().substr(0, opLength);
 		string kvKey = msg.req().op().substr(opLength, keyLength);
 
@@ -178,6 +197,7 @@ public:
 						// Notice("Retrieving from store %s", kvKey.c_str());
 						assert(kvStore.find(kvKey) != kvStore.end());
 						readRes = (kvStore.find(kvKey))->second;
+            last_accepted = last_accepted_map.find(kvKey)->second;
 					} else {
 						// pending update unordered.
 						readRes = "ordernowread!";
@@ -185,9 +205,15 @@ public:
 				} else {
 					// no update to the key; so directly read.
 					readRes = getFromStore(kvKey);
+					if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
+            last_accepted = last_accepted_map.find(kvKey)->second;
+          }
 				}
 			} else { // No entries in durlog; so, no pending updates and thus can read directly.
 				readRes = getFromStore(kvKey);
+				if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
+          last_accepted = last_accepted_map.find(kvKey)->second;
+        }
 			}
 		} else if (IsNonNilextWrite(op)) {
 			syncOrder = true;

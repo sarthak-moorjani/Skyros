@@ -13,6 +13,10 @@ message ReplyMessage {
     required uint64 clientreqid = 4;
     required uint32 replicaIdx = 5;
     optional uint64 clientid = 6;
+
+    optional int32 last_accepted = 7;
+
+    optional int32 last_executed = 8;
 }
 
 message UnloggedRequestMessage {
@@ -91,7 +95,7 @@ message RecoveryResponseMessage {
 }
 
 message MakeDurabilityServerKnownMessage {
-    required uint64 replicaIdx = 1;    
+    required uint64 replicaIdx = 1;
 }
 
 message StatusUpdateMessage {
