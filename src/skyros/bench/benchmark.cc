@@ -103,6 +103,9 @@ BenchmarkClient::BenchmarkClient(Client &client, Transport &transport,
         off += KEY_SIZE + 1;
 
         string op = std::string(op_ptr, OPCODE_SIZE);
+        if (op == "R") {
+          Notice("read request in client");
+        }
         string key = std::string(key_ptr, KEY_SIZE);
         assert(op.length() == OPCODE_SIZE);
         assert(key.length() == KEY_SIZE);
@@ -212,6 +215,10 @@ BenchmarkClient::SendNext()
     bool isRead = msg.str().c_str()[0] == 'r' || msg.str().c_str()[0] == 'R';
     bool isUpdate = msg.str().c_str()[0] == 'u' || msg.str().c_str()[0] == 'U';
     bool isNonNilext = msg.str().c_str()[0] == 'e' || msg.str().c_str()[0] == 'E';
+
+    if (isRead) {
+      Notice("is read is set properly --");
+    }
 
     if(!isRead) {
     	if (isUpdate || isNonNilext)

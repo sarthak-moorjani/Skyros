@@ -158,7 +158,6 @@ public:
 
   void UpdateLastAcceptedMap(string kvKey) {
 
-    Notice("Updating the last acc map ----- ----");
     if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
       int val = last_accepted_map.find(kvKey)->second;
       last_accepted_map.insert_or_assign(kvKey, val + 1);
