@@ -193,6 +193,7 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		reply.set_opnum(0); //cannot order now!
 		reply.set_clientreqid(msg.req().clientreqid());
 		reply.set_replicaidx(this->replicaIdx);
+		Notice("fast read path taken ------");
 		if (last_accepted != -1)
 		  reply.set_last_accepted(last_accepted);
 		transport->SendMessage(this, remote, reply);

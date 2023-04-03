@@ -185,6 +185,7 @@ public:
 			lastUpdateToKey.insert_or_assign(kvKey, tableKey);
 			readRes = "durable-ack";
 		} else if (IsGet(op)) {
+		  Notice("Got a read request for %s", kvKey.c_str());
 			if (durabilityLog.size() > 0) {
 
 				if (lastUpdateToKey.find(kvKey) != lastUpdateToKey.end()) {
