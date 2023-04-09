@@ -164,9 +164,9 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 
 	app->AppUpcall(msg, syncOrder, readRes, last_accepted, last_executed);
 
-	if (syncOrder) {
+	if (syncOrder && AmLeader()) {
 	// Order the operation now; add to consensus log by sending an internal message to consensus.
-		if (readRes.compare("ordernowread!") == 0 && AmLeader()) {
+		if (readRes.compare("ordernowread!") == 0) {
 			syncPathRead++;
 			if (syncPathRead%5000 == 0) {
 				Notice("syncPathRead: %d", syncPathRead);
@@ -190,6 +190,7 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		return;
 	} else {
 		// nilext write or fast read directly respond
+		Notice("not entering sync reads");
 		ReplyMessage reply;
 		reply.set_reply(readRes);
 		reply.set_view(this->view);
