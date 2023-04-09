@@ -216,6 +216,7 @@ public:
             last_executed = last_executed_map.find(kvKey)->second;
 					} else {
 						// pending update unordered.
+						Notice("setting readres to ordernow read");
 						readRes = "ordernowread!";
 					}
 				} else {

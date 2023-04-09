@@ -109,7 +109,7 @@ VRReplica::VRReplica(Configuration config, int myIdx,
     this->recoveryTimeout = new Timeout(transport, 5000, [this]() {
             SendRecoveryMessages();
         });
-    this->bgReplTimeout = new Timeout(transport, 1, [this]() {
+    this->bgReplTimeout = new Timeout(transport, 1000, [this]() {
                 BgRepl();
             });
     this->manualEV = new ManualCallBack(transport, [this]() {

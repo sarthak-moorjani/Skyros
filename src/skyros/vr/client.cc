@@ -176,6 +176,7 @@ VRClient::HandleReply(const TransportAddress &remote,
 {
     if (msg.has_last_accepted()) {
       HandleReadReply(remote, msg);
+      return;
     }
 
     responses[msg.clientreqid()]++;
@@ -216,8 +217,37 @@ VRClient::HandleReadReply(const TransportAddress &remote,
   if (msg.has_last_accepted() && msg.has_last_executed()) {
     Notice("last accepted is %d and last executed is %d",
            msg.last_accepted(), msg.last_executed());
-    return;
   }
+
+  responses[msg.clientreqid()]++;
+
+  // proxy to check whether the responses are from the same view.
+  assert(msg.view() == 0);
+
+  //if((uint64_t) config.GetLeaderIndex(msg.view()) == msg.replicaidx()) {
+  //  leader_acked[msg.clientreqid()] = 1;
+  //  }
+
+    if (pendingRequest == NULL) {
+        // Warning("Received reply when no request was pending");
+        return;
+    }
+    if (msg.clientreqid() != pendingRequest->clientReqId) {
+        // Warning("Received reply for a different request");
+        return;
+    }
+
+    Debug("Client received reply");
+
+    if(responses[msg.clientreqid()] >= quorum) {
+        requestTimeout->Stop();
+        PendingRequest *req = pendingRequest;
+        pendingRequest = NULL;
+        req->continuation(req->request, msg.reply());
+        Notice("Got read response from quorum");
+        // Notice("Got response: %s", msg.reply().c_str());
+        delete req;
+    }
 }
 
 void
