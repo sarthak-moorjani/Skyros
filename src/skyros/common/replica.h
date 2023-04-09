@@ -107,11 +107,6 @@ private:
     	return !op.compare("r") || !op.compare("R");
     }
 
-    bool IsSet(string op) {
-    	return !op.compare("i") || !op.compare("I")
-    			|| !op.compare("u") || !op.compare("U");
-    }
-
     bool IsNonNilextWrite(string op) {
     	return !op.compare("e") || !op.compare("E");
     }
@@ -128,6 +123,11 @@ public:
 	virtual void AddToQueue(specpaxos::vr::proto::RequestMessage msg) {
 		while(!queue.push(msg));
 	}
+
+   bool IsSet(string op) {
+     return !op.compare("i") || !op.compare("I")
+       || !op.compare("u") || !op.compare("U");
+   }
 
 	virtual std::queue<specpaxos::vr::proto::RequestMessage> GetAndDeleteFromQueue() {
 		std::queue<specpaxos::vr::proto::RequestMessage> tmp;
@@ -155,6 +155,17 @@ public:
 	 * Note that clients do not send the non-nilext operations to the durability server; they are
 	 * immediately ordered by sending to consensus.
 	*/
+
+  void UpdateLastExecutedMap(string kvKey) {
+    if (last_executed_map.find(kvKey) != last_executed_map.end()) {
+      int val = last_executed_map.find(kvKey)->second;
+      last_executed_map.insert_or_assign(kvKey, val + 1);
+      Notice("###### Updating last executed ##### %d", val + 1);
+      return;
+    }
+
+    last_executed_map.insert_or_assign(kvKey, 1);
+  }
 
   void UpdateLastAcceptedMap(string kvKey) {
 

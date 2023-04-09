@@ -188,6 +188,13 @@ VRReplica::CommitUpTo(opnum_t upto)
         ReplyMessage reply;
         Execute(lastCommitted, entry->request, reply);
 
+        string op = entry->request.op().substr(0, opLength);
+        if (app->IsSet(op)) {
+          string kvKey = entry->request.op().substr(
+                           opLength, keyLength);
+          app->UpdateLastExecutedMap(kvKey);
+        }
+
         reply.set_view(entry->viewstamp.view);
         reply.set_opnum(entry->viewstamp.opnum);
         reply.set_clientreqid(entry->request.clientreqid());
@@ -830,7 +837,10 @@ VRReplica::HandlePrepare(const TransportAddress &remote,
 
         // Update the last accepted value.
         string kvKey = req.op().substr(opLength, keyLength);
-        app->UpdateLastAcceptedMap(kvKey);
+        string op = req.op().substr(0, opLength);
+        if (app->IsSet(op)) {
+          app->UpdateLastAcceptedMap(kvKey);
+        }
         UpdateClientTable(req);
     }
     ASSERT(op == msg.opnum());
