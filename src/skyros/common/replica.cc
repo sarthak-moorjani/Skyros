@@ -60,7 +60,8 @@ void
 Replica::LeaderUpcall(specpaxos::vr::proto::RequestMessage msg, bool &syncOrder, string &readRes)
 {
     int last_accepted = -1;
-    app->AppUpcall(msg, syncOrder, readRes, last_accepted);
+    int last_executed = -1;
+    app->AppUpcall(msg, syncOrder, readRes, last_accepted, last_executed);
 }
 
 void

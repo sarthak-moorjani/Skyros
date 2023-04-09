@@ -93,7 +93,7 @@ VRClient::Invoke(const string &request,
     if(request.c_str()[0] == 'r' || request.c_str()[0] == 'R'
         || request.c_str()[0] == 'e' || request.c_str()[0] == 'E') {
         // only one response expected for reads and non-nilext writes
-    	quorum = 1;
+    	quorum = 3;
     	Notice("Sending read request ---");
     }
 
@@ -175,9 +175,7 @@ VRClient::HandleReply(const TransportAddress &remote,
                       const proto::ReplyMessage &msg)
 {
     if (msg.has_last_accepted()) {
-      Warning("reply contains -------- last accepted %d", msg.last_accepted());
-    } else {
-      Warning("panic panic panic -----");
+      HandleReadReply(remote, msg);
     }
 
     responses[msg.clientreqid()]++;
@@ -209,6 +207,17 @@ VRClient::HandleReply(const TransportAddress &remote,
         // Notice("Got response: %s", msg.reply().c_str());
         delete req;
     }
+}
+
+void
+VRClient::HandleReadReply(const TransportAddress &remote,
+                          const proto::ReplyMessage &msg) {
+
+  if (msg.has_last_accepted() && msg.has_last_executed()) {
+    Notice("last accepted is %d and last executed is %d",
+           msg.last_accepted(), msg.last_executed());
+    return;
+  }
 }
 
 void

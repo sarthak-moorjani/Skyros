@@ -150,20 +150,21 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 	}
 
 	bool isNilext = app->IsNilext(msg);
-	if (!isNilext) {
-		if(!AmLeader())
-			return;
-	}
+	//if (!isNilext) {
+	//	if(!AmLeader())
+	//		return;
+	//}
 
 	bool syncOrder = false;
 	string readRes = "";
   int last_accepted = -1;
+  int last_executed = -1;
 
-	app->AppUpcall(msg, syncOrder, readRes, last_accepted);
+	app->AppUpcall(msg, syncOrder, readRes, last_accepted, last_executed);
 
 	if (syncOrder) {
 	// Order the operation now; add to consensus log by sending an internal message to consensus.
-		if (readRes.compare("ordernowread!") == 0) {
+		if (readRes.compare("ordernowread!") == 0 && AmLeader()) {
 			syncPathRead++;
 			if (syncPathRead%5000 == 0) {
 				Notice("syncPathRead: %d", syncPathRead);
@@ -195,6 +196,9 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		reply.set_replicaidx(this->replicaIdx);
 		if (last_accepted != -1)
 		  reply.set_last_accepted(last_accepted);
+		if (last_executed != -1) {
+      reply.set_last_executed(last_executed);
+    }
 		transport->SendMessage(this, remote, reply);
 	}
 

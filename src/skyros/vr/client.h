@@ -87,6 +87,10 @@ protected:
     void ResendRequest();
     void HandleReply(const TransportAddress &remote,
                      const proto::ReplyMessage &msg);
+
+    void HandleReadReply(const TransportAddress &remote,
+                         const proto::ReplyMessage &msg);
+
     void HandleUnloggedReply(const TransportAddress &remote,
                              const proto::UnloggedReplyMessage &msg);
     void UnloggedRequestTimeoutCallback();

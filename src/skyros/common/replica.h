@@ -182,7 +182,7 @@ public:
     last_accepted_map.insert_or_assign(kvKey, 1);
   }
 
-	virtual void AppUpcall(specpaxos::vr::proto::RequestMessage msg, bool &syncOrder, string &readRes, int &last_accepted) {
+	virtual void AppUpcall(specpaxos::vr::proto::RequestMessage msg, bool &syncOrder, string &readRes, int &last_accepted, int &last_executed) {
 		syncOrder = false;
 
     last_accepted = -1;
@@ -213,6 +213,7 @@ public:
 						assert(kvStore.find(kvKey) != kvStore.end());
 						readRes = (kvStore.find(kvKey))->second;
             last_accepted = last_accepted_map.find(kvKey)->second;
+            last_executed = last_executed_map.find(kvKey)->second;
 					} else {
 						// pending update unordered.
 						readRes = "ordernowread!";
@@ -223,11 +224,17 @@ public:
 					if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
             last_accepted = last_accepted_map.find(kvKey)->second;
           }
+          if (last_executed_map.find(kvKey) != last_executed_map.end()) {
+            last_executed = last_executed_map.find(kvKey)->second;
+          }
 				}
 			} else { // No entries in durlog; so, no pending updates and thus can read directly.
 				readRes = getFromStore(kvKey);
 				if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
           last_accepted = last_accepted_map.find(kvKey)->second;
+        }
+        if (last_executed_map.find(kvKey) != last_executed_map.end()) {
+            last_executed = last_executed_map.find(kvKey)->second;
         }
 			}
 		} else if (IsNonNilextWrite(op)) {
