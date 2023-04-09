@@ -171,6 +171,10 @@ public:
 
     if (last_accepted_map.find(kvKey) != last_accepted_map.end()) {
       int val = last_accepted_map.find(kvKey)->second;
+      if (last_executed_map.find(kvKey) != last_executed_map.end()) {
+        int exec_val = last_executed_map.find(kvKey)->second;
+        Notice("acc val being set as %d exec val is %d", val + 1, exec_val);
+      }
       last_accepted_map.insert_or_assign(kvKey, val + 1);
       return;
     }
