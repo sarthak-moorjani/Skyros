@@ -111,9 +111,9 @@ else:
 		while '1000000' not in out:
 			out, err = invoke_remote_cmd(ip, perf_dir + "/pems", "cat /mydata/tmp/vrlog* | grep -i lastcommitted")
 			out = out.decode(sys.stdout.encoding)
-			time.sleep(2)
+			time.sleep(4)
 			times_checked += 1
-			if times_checked > 7:
+			if times_checked > 10:
 				print('Load did not complete after checking for 7 times... exiting.')
 				sys.exit(0)
 

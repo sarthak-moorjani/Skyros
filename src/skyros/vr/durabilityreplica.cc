@@ -190,7 +190,6 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		return;
 	} else {
 		// nilext write or fast read directly respond
-		Notice("not entering sync reads");
 		ReplyMessage reply;
 		reply.set_reply(readRes);
 		reply.set_view(this->view);
