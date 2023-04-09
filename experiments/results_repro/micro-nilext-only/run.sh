@@ -19,37 +19,37 @@ workload='t' #write-only workload for throughput latency graphs
 ./update_sources.py
 
 # paxos (no batch)
-for n in 2 5 10 15 20 40; do
-for i in 1; do
-for code in orig; do
+#for n in 2 5 10 15 20 40; do
+#for i in 1; do
+#for code in orig; do
         # set the batch parameter to 1 for no batching (for paxos-nobatch variant)
-        ../../remote-throughput.py --medium $r_medium --code $code --time $r_time --run $i --cluster $r_cluster --sync no --user $r_user --workload $workload --num_nodes 3 --target_system_name $r_system --sync_rep_factor 3 --num_clients $n --leader_reads yes --batch 1
-        sleep 2
-done
-done
-done
+#        ../../remote-throughput.py --medium $r_medium --code $code --time $r_time --run $i --cluster $r_cluster --sync no --user $r_user --workload $workload --num_nodes 3 --target_system_name $r_system --sync_rep_factor 3 --num_clients $n --leader_reads yes --batch 1
+#        sleep 2
+#done
+#done
+#done
 
-rm -rf ./$workload.$r_system.orignobatch.*
-mv ../../$workload.$r_system.orignobatch.* .
+#rm -rf ./$workload.$r_system.orignobatch.*
+#mv ../../$workload.$r_system.orignobatch.* .
 
 
 # paxos
-for n in 2 5 12 25 35 40 50 70 100; do
-for i in 1; do
-for code in orig; do
+#for n in 2 5 12 25 35 40 50 70 100; do
+#for i in 1; do
+#for code in orig; do
         # set the batch parameter to 20 batched Paxos...this is the value for which paxos performed the best
-        ../../remote-throughput.py --medium $r_medium --code $code --time $r_time --run $i --cluster $r_cluster --sync no --user $r_user --workload $workload --num_nodes 3 --target_system_name $r_system --sync_rep_factor 3 --num_clients $n --leader_reads yes --batch 20
-        sleep 2
-done
-done
-done
+#        ../../remote-throughput.py --medium $r_medium --code $code --time $r_time --run $i --cluster $r_cluster --sync no --user $r_user --workload $workload --num_nodes 3 --target_system_name $r_system --sync_rep_factor 3 --num_clients $n --leader_reads yes --batch 20
+#        sleep 2
+#done
+#done
+#done
 
-rm -rf ./$workload.$r_system.orig.*
-mv ../../$workload.$r_system.orig.* .
+#rm -rf ./$workload.$r_system.orig.*
+#mv ../../$workload.$r_system.orig.* .
 
 
 # Skyros
-for n in 2 5 12 15 25 35 50 70 100; do
+for n in 1; do
 for i in 1; do
 for code in rtop; do
         # set the batch parameter to 20 batched Paxos...this is the value for which paxos performed the best

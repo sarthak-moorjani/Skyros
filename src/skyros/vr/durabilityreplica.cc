@@ -150,10 +150,12 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 	}
 
 	bool isNilext = app->IsNilext(msg);
-	//if (!isNilext) {
-	//	if(!AmLeader())
-	//		return;
-	//}
+	if (!isNilext) {
+		if(AmLeader()) {
+		  Notice("I am the leader I will not do reads");
+			return;
+		}
+	}
 
 	bool syncOrder = false;
 	string readRes = "";

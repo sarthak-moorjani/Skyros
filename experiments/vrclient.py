@@ -83,8 +83,6 @@ else:
 		if code == 'rtop' or code == 'rtopcomm':
 			os.system('{0} -c {1} -s {5} -m vr -n {2} -k {3} > /mydata/tmp/load.log.{4} 2>&1 &'.format(client_binary_path, config_file_path, 125000, workload_trace_dir + load_file_prefix + str(i), str(i), consensus_config))
 		elif code == 'orig':
-			cmd = '{0} -c {1} -m vr -n {2} -k {3} > /mydata/tmp/load.log.{4} 2>&1 &'.format(client_binary_path, config_file_path, 125000, workload_trace_dir + load_file_prefix + str(i), str(i))
-			print (cmd)
 			os.system('{0} -c {1} -m vr -n {2} -k {3} > /mydata/tmp/load.log.{4} 2>&1 &'.format(client_binary_path, config_file_path, 125000, workload_trace_dir + load_file_prefix + str(i), str(i)))
 		elif code == 'curp':
 			os.system('{0} -c {1} -m vr -n {2} -k {3} > /mydata/tmp/load.log.{4} 2>&1 &'.format(client_binary_path, config_file_path, 125000, workload_trace_dir + load_file_prefix + str(i), str(i)))
@@ -156,6 +154,12 @@ out = 'something'
 while out is not None and len(out) != 0:
 	out, err = invoke_cmd('ps aux | grep bench | grep client | grep vr | grep -v py')
 	time.sleep(2)
+
+print("Hello ----- {0}".format(perf_dir))
+os.system("cd {0}; touch random".format(perf_dir))
+
+onlyfiles = [f for f in os.listdir(perf_dir)]
+print(onlyfiles)
 
 for i in range(1, num_clients+1):
 	with open('{0}/lat.{1}'.format(perf_dir, i), 'r') as f:

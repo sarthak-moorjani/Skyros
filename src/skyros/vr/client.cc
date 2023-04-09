@@ -93,7 +93,7 @@ VRClient::Invoke(const string &request,
     if(request.c_str()[0] == 'r' || request.c_str()[0] == 'R'
         || request.c_str()[0] == 'e' || request.c_str()[0] == 'E') {
         // only one response expected for reads and non-nilext writes
-    	quorum = 3;
+    	quorum = 2;
     	Notice("Sending read request ---");
     }
 
