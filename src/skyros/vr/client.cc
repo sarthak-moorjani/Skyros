@@ -214,6 +214,10 @@ void
 VRClient::HandleReadReply(const TransportAddress &remote,
                           const proto::ReplyMessage &msg) {
 
+  Notice("value of read is %s", msg.reply().c_str())
+  if (msg.has_last_accepted() && !msg.has_last_executed()) {
+    Notice("last acc is there but last exec not there");
+  }
   if (msg.has_last_accepted() && msg.has_last_executed()) {
     Notice("last accepted is %d and last executed is %d",
            msg.last_accepted(), msg.last_executed());
