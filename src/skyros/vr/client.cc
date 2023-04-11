@@ -246,7 +246,7 @@ void
 VRClient::HandleReadReply(const TransportAddress &remote,
                           const proto::ReplyMessage &msg) {
 
-  Notice("value of read is %s", msg.reply().c_str());
+  // Notice("value of read is %s", msg.reply().c_str());
   if (msg.has_is_durable() && msg.is_durable() == false) {
     // Retry after timeout.
     retry++;
@@ -261,13 +261,13 @@ VRClient::HandleReadReply(const TransportAddress &remote,
   if (msg.has_last_accepted() && msg.has_last_executed()) {
     Notice("last accepted is %d and last executed is %d",
            msg.last_accepted(), msg.last_executed());
-    // Enter rinse phase.
-    retry++;
     if (msg.last_executed() <  msg.last_accepted()) {
+      // Enter rinse phase.
+      retry++;
       RinsePhase(msg.replicaidx(), true, msg.last_accepted(),
                  msg.last_executed());
+      return;
     }
-    return;
   }
 
   responses[msg.clientreqid()]++;
@@ -297,7 +297,7 @@ VRClient::HandleReadReply(const TransportAddress &remote,
         req->continuation(req->request, msg.reply());
         retry = 0;
         Notice("Got read response from quorum");
-        Notice("Got response: %s", msg.reply().c_str());
+        // Notice("Got response: %s", msg.reply().c_str());
         delete req;
     }
 }
