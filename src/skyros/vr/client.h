@@ -35,6 +35,7 @@
 #ifndef _VR_CLIENT_H_
 #define _VR_CLIENT_H_
 
+#include <atomic>
 #include "common/client.h"
 #include "lib/configuration.h"
 #include "vr/vr-proto.pb.h"
@@ -59,6 +60,9 @@ public:
     virtual void ReceiveMessage(const TransportAddress &remote,
                                 const string &type, const string &data,
                                 void *meta_data) override;
+
+ public:
+  std::atomic<int> retry;
 
 protected:
     int view;
@@ -90,6 +94,11 @@ protected:
 
     void HandleReadReply(const TransportAddress &remote,
                          const proto::ReplyMessage &msg);
+
+    void RinsePhase(int replicaIdx,
+                    bool is_durable,
+                    int last_accepted,
+                    int last_executed);
 
     void HandleUnloggedReply(const TransportAddress &remote,
                              const proto::UnloggedReplyMessage &msg);

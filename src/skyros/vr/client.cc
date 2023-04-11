@@ -40,6 +40,7 @@
 #include "lib/transport.h"
 #include "vr/client.h"
 #include "vr/vr-proto.pb.h"
+#include <unistd.h>
 
 namespace specpaxos {
 namespace vr {
@@ -54,6 +55,7 @@ VRClient::VRClient(const Configuration &config,
     lastReqId = 0;
     quorum = 0;
 
+    retry = 0;
     requestTimeout = new Timeout(transport, 7000, [this]() {
             ResendRequest();
         });
@@ -211,16 +213,61 @@ VRClient::HandleReply(const TransportAddress &remote,
 }
 
 void
+VRClient::RinsePhase(int replicaIdx,
+                     bool is_durable,
+                     int last_accepted,
+                     int last_executed) {
+
+  if (retry > 10) {
+    Panic("retried more than 5 times in rinse phase");
+    return;
+  }
+
+  if (last_accepted == -1) {
+    assert(is_durable == false);
+    usleep(1000);
+    proto::RequestMessage reqMsg;
+    reqMsg.mutable_req()->set_op(pendingRequest->request);
+    reqMsg.mutable_req()->set_clientid(clientid);
+    reqMsg.mutable_req()->set_clientreqid(pendingRequest->clientReqId);
+    transport->SendMessageToReplica(this, replicaIdx, reqMsg);
+  } else {
+    assert(last_accepted > last_executed);
+    usleep(1000);
+    proto::RequestMessage reqMsg;
+    reqMsg.mutable_req()->set_op(pendingRequest->request);
+    reqMsg.mutable_req()->set_clientid(clientid);
+    reqMsg.mutable_req()->set_clientreqid(pendingRequest->clientReqId);
+    transport->SendMessageToReplica(this, replicaIdx, reqMsg);
+  }
+}
+
+void
 VRClient::HandleReadReply(const TransportAddress &remote,
                           const proto::ReplyMessage &msg) {
 
-  Notice("value of read is %s", msg.reply().c_str())
+  Notice("value of read is %s", msg.reply().c_str());
+  if (msg.has_is_durable() && msg.is_durable() == false) {
+    // Retry after timeout.
+    retry++;
+    Notice("request is not durable yet, enter rinse phase");
+    RinsePhase(msg.replicaidx(), false, -1, -1);
+    return;
+  }
+
   if (msg.has_last_accepted() && !msg.has_last_executed()) {
     Notice("last acc is there but last exec not there");
   }
   if (msg.has_last_accepted() && msg.has_last_executed()) {
     Notice("last accepted is %d and last executed is %d",
            msg.last_accepted(), msg.last_executed());
+    // Enter rinse phase.
+    retry++;
+    if (msg.last_executed() <  msg.last_accepted()) {
+      RinsePhase(msg.replicaidx(), true, msg.last_accepted(),
+                 msg.last_executed());
+    }
+    return;
   }
 
   responses[msg.clientreqid()]++;
@@ -248,8 +295,9 @@ VRClient::HandleReadReply(const TransportAddress &remote,
         PendingRequest *req = pendingRequest;
         pendingRequest = NULL;
         req->continuation(req->request, msg.reply());
+        retry = 0;
         Notice("Got read response from quorum");
-        // Notice("Got response: %s", msg.reply().c_str());
+        Notice("Got response: %s", msg.reply().c_str());
         delete req;
     }
 }

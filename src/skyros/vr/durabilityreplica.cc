@@ -161,6 +161,7 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 	string readRes = "";
   int last_accepted = -1;
   int last_executed = -1;
+  bool is_durable = true;
 
 	app->AppUpcall(msg, syncOrder, readRes, last_accepted, last_executed);
 
@@ -200,6 +201,9 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		  reply.set_last_accepted(last_accepted);
 		if (last_executed != -1) {
       reply.set_last_executed(last_executed);
+    }
+    if (syncOrder == true) {
+      reply.set_is_durable(false);
     }
 		transport->SendMessage(this, remote, reply);
 	}
