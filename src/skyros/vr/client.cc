@@ -96,7 +96,6 @@ VRClient::Invoke(const string &request,
         || request.c_str()[0] == 'e' || request.c_str()[0] == 'E') {
         // only one response expected for reads and non-nilext writes
     	quorum = 2;
-    	Notice("Sending read request ---");
     }
 
     SendRequest();
@@ -191,7 +190,6 @@ VRClient::HandleReply(const TransportAddress &remote,
     }
 
     if (msg.has_is_read() && msg.is_read() == true) {
-	    Notice("--- key not found --");
 	    leader_acked[msg.clientreqid()] = 1;
     }
 
@@ -204,7 +202,7 @@ VRClient::HandleReply(const TransportAddress &remote,
         return;
     }
 
-    Notice("Client received reply");
+    //Notice("Client received reply");
 
     if(responses[msg.clientreqid()] >= quorum
         && leader_acked[msg.clientreqid()]) {
@@ -264,8 +262,8 @@ VRClient::HandleReadReply(const TransportAddress &remote,
     Notice("last acc is there but last exec not there");
   }
   if (msg.has_last_accepted() && msg.has_last_executed()) {
-    Notice("last accepted is %d and last executed is %d",
-           msg.last_accepted(), msg.last_executed());
+    // Notice("last accepted is %d and last executed is %d",
+    //       msg.last_accepted(), msg.last_executed());
     if (msg.last_executed() <  msg.last_accepted()) {
       // Enter rinse phase.
       retry++;
@@ -301,7 +299,7 @@ VRClient::HandleReadReply(const TransportAddress &remote,
         pendingRequest = NULL;
         req->continuation(req->request, msg.reply());
         retry = 0;
-        Notice("Got read response from quorum");
+        //Notice("Got read response from quorum");
         // Notice("Got response: %s", msg.reply().c_str());
         delete req;
     }

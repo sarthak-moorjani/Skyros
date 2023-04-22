@@ -216,9 +216,6 @@ BenchmarkClient::SendNext()
     bool isUpdate = msg.str().c_str()[0] == 'u' || msg.str().c_str()[0] == 'U';
     bool isNonNilext = msg.str().c_str()[0] == 'e' || msg.str().c_str()[0] == 'E';
 
-    if (isRead) {
-      Notice("is read is set properly --");
-    }
 
     if(!isRead) {
     	if (isUpdate || isNonNilext)
