@@ -103,9 +103,9 @@ BenchmarkClient::BenchmarkClient(Client &client, Transport &transport,
         off += KEY_SIZE + 1;
 
         string op = std::string(op_ptr, OPCODE_SIZE);
-        if (op == "R") {
-          Notice("read request in client");
-        }
+        //if (op == "R") {
+          // Notice("read request in client");
+        //}
         string key = std::string(key_ptr, KEY_SIZE);
         assert(op.length() == OPCODE_SIZE);
         assert(key.length() == KEY_SIZE);

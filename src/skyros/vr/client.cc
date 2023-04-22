@@ -190,6 +190,11 @@ VRClient::HandleReply(const TransportAddress &remote,
         leader_acked[msg.clientreqid()] = 1;
     }
 
+    if (msg.has_is_read() && msg.is_read() == true) {
+	    Notice("--- key not found --");
+	    leader_acked[msg.clientreqid()] = 1;
+    }
+
     if (pendingRequest == NULL) {
         // Warning("Received reply when no request was pending");
         return;
@@ -199,7 +204,7 @@ VRClient::HandleReply(const TransportAddress &remote,
         return;
     }
 
-    Debug("Client received reply");
+    Notice("Client received reply");
 
     if(responses[msg.clientreqid()] >= quorum
         && leader_acked[msg.clientreqid()]) {

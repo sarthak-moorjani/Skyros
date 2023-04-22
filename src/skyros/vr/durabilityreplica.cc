@@ -152,7 +152,6 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 	bool isNilext = app->IsNilext(msg);
 	if (!isNilext) {
 		if(AmLeader()) {
-		  Notice("I am the leader I will not do reads");
 			return;
 		}
 	}
@@ -202,6 +201,11 @@ void VRDurabilityReplica::HandleRequest(const TransportAddress &remote,
 		if (last_executed != -1) {
       reply.set_last_executed(last_executed);
     }
+		if (msg.req().op().substr(0, 1) == "R" || msg.req().op().substr(0, 1) == "r") {
+			reply.set_is_read(true);
+		} else {
+		 	reply.set_is_read(false);
+		}
     if (syncOrder == true) {
       reply.set_is_durable(false);
     }

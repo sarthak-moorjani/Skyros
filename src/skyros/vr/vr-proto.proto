@@ -19,6 +19,8 @@ message ReplyMessage {
     optional int32 last_executed = 8;
 
     optional bool is_durable = 9;
+
+    optional bool is_read = 10;
 }
 
 message UnloggedRequestMessage {
