@@ -49,7 +49,7 @@ workload='t' #write-only workload for throughput latency graphs
 
 
 # Skyros
-for n in 1; do
+for n in 2 5 12; do
 for i in 1; do
 for code in rtop; do
         # set the batch parameter to 20 batched Paxos...this is the value for which paxos performed the best

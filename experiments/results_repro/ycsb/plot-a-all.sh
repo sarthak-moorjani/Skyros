@@ -18,7 +18,7 @@
 	set yrange [0:100]
 	set tics scale 0.7 nomirror
 	set xrange [0:1000]
-	set xtics 300
+	set xtics 1000
 	set border 3
 	set style function linespoints
 	#set label '\~2x' at 110,80 font "Times-new-roman,19" front 
@@ -60,7 +60,7 @@
 	set border lw 0.5
 	set yrange [95:100]
 	set xrange [0:800]
-	set xtics 300 font "Times-new-roman,19" offset 0,0.2 nomirror
+	set xtics 1000 font "Times-new-roman,19" offset 0,0.2 nomirror
 	set ytics 95,2,99.9 font "Times-new-roman,19" offset 0.65,0 nomirror
 	set origin 0.3,0.34	
 	set size 0.63,0.55
