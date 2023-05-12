@@ -14,7 +14,7 @@ There are 3 sets of experiments all of which are kept as individual directories 
 1. micro-nilext-only
 3. micro-nilext-reads 
 5. ycsb
-6. 
+
 Each directory has a bunch of scripts but the one you want to run is **"run.sh"**. This generates the latencies and throughput of the given workload. This is used to plot the graphs in the paper manually.
 
 *What run.sh does internally* run.sh first ensures that the sources on the replicas are correct (by internally ssh-ing to the replicas etc). 
