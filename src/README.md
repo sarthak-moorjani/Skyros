@@ -1,10 +1,9 @@
-This folder contains the implementation of Skyros appearing in the paper titled "Exploiting Nil-Externality for Fast Replicated Storage" in SOSP 2021. Skyros is a new replication protocol that offers high performance by deferring ordering and executing operations until their effects are externalized. 
-
-This folder also contains the fork of an open-source version of viewstamped replication [1]. Skyros is built by modifying viewstamped replication.
+This folder contains the implementation of Syros appearing in the paper titled "Scalable Readys on Skyros - Syros" for the class CS598 at UIUC. 
+This folder also contains the fork of an open-source version of viewstamped replication [1] and Skyros [2] . Syros is built by modifying viewstamped replication and Skyros.
 
 ## 1. Getting Started
 
-Skyros is usually run on a cluster of five or seven machines (replicas). We have tested on Skyros on Ubuntu 18.04 (and we recommend similar Linux distributions). 
+Syros is usually run on a cluster of five or seven machines (replicas). We have tested on Syros on Ubuntu 18.04 (and we recommend similar Linux distributions). 
 
 Requirements on a typical Ubuntu machine:
 
@@ -25,6 +24,7 @@ Note that the test scripts and configuration provided are for a local cluster wh
 
 ## 3. Credits and Acknowledgements
 
-Please contact Aishwarya Ganesan and Ramnatthan Alagappan if you have any questions. Skyros is built by modifying an open-source implementation of viewstamped replication (forked off from [1]). Viewstamped replication (VR) is a two-RTT consensus protocol equivalent to Multi-Paxos. Skyros is a 1-RTT replication protocol that improves upon VR by exploiting nilexternality. Credits must be given to the authors and contributors of [1].
+Syros is built on top of the open-source implementation of Skyros (forked off from [2]) built by Aishwarya Ganesan and Ramnatthan Alagappan. Skyros is built by modifying an open-source implementation of viewstamped replication (forked off from [1]). Viewstamped replication (VR) is a two-RTT consensus protocol equivalent to Multi-Paxos. Skyros is a 1-RTT replication protocol that improves upon VR by exploiting nilexternality. Syros improves on Skyros by making it suitable for geo replicated systems. Credits must be given to the authors and contributors of [1] and [2].
 
 [1]. https://github.com/UWSysLab/NOPaxos
+[2]. https://github.com/dassl-uiuc/Skyros 
