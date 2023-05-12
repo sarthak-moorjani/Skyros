@@ -1,23 +1,10 @@
-## Artifact evaluation
-
-To make the artifact evaluation process easier, we have set up a cluster on AWS EC2. Evaluators can use this cluster to run experiments and reproduce results. This repository and all required dependencies have already been cloned and installed on the machines. 
-
-
 ## Important notes about using the cluster for the first time 
-
-Basic information about the cluster: our cluster comprises of six machines (five replicas and one client). This cluster is hosted on EC2 m5zn.baremetal instances. All machines run Ubuntu 18.04.
 
 For artifact evaluation purposes, we have automated running all the experiments. To start these experiments, you will need to ssh into the client machines. The below instructions tell how to successfully ssh into the client (or generally any machine in the cluster).
 
-First, clone this repository on to your local machine. You need a pem file to ssh into the cluster. The pem file is supposed to be present inside the experiments/pem folder. Because this is a sensitive file, you must copy the pem file contents from HotCRP and put it into a file called us-east-1.pem in the experiments/pems/ folder. Run chmod 0400 experiments/pems/us-east-1.pem to enable correct level of permissions. 
+First, clone this repository on to your local machine.
 
-Second, you need to know the external ips of the machines in the cluster to ssh into them. The ip addresses are present in the experiments/external_ips file. However, every time the cluster is restarted, the external ips change. Whenever we restart the cluster, we will make sure to update the external_ips file and push it to the repo. Thus, you must make sure that you pull the latest code on your local workstation before you try to ssh into the machines.
-
-Finally, your public IP must be added to our security group so that you can ssh into the machines (this is a AWS EC2 best practice; otherwise, anybody can try to ssh and this has caused problems in the past). We will help you when you would like to access the cluster for the first time. You may need to run 'curl ipecho.net/plain; echo' on your terminal to let us know your public IP; we will add it.
-
-If all steps are done correctly, you must be able to ssh into the cluster. Test this by running: "chmod 0400 experiments/pems/us-east-1.pem; client=$(tail -n 1 experiments/external_ips); ssh -i experiments/pems/us-east-1.pem ubuntu@$client". This command will ssh into the client machine which is usually the last line in the external_ips file. From your local machine, most of the times, you will need to ssh only into the client (not the five replicas); this is because you will start the experiments only from the client machine.
-
-Finally, since it is expensive to keep the baremetal-cluster running for a month in AWS, you would need to contact us when you would like to reproduce the results and we will start the machines for you. Also, since we have only one live cluster, artifact evaluators have to proceed one at a time to reproduce the results. However, to reproduce all experiments, we expect only a total time of \~6 hours. To ease evaluation, we have automated the experiments. Please see the below section for more details. If for some reason, you are unable to ssh into the machines listed in external_ips, please contact the authors via hotcrp and we will help you. 
+Second, you need to know the external ips of the machines in the cluster to ssh into them. The ip addresses are present in the experiments/external_ips file.
 
 ##  Running experiments
 
